@@ -18,12 +18,16 @@ class AdminMiddleware implements Middleware
 
         if (!Auth::isAdmin()) {
             FlashMessage::danger('Acesso negado. Você precisa ser um administrador para acessar esta página.');
-            $this->redirectTo('/dashboard');
+            $this->redirectTo('/login');
         }
     }
 
     private function redirectTo(string $location): void
     {
+        if (defined('IS_TEST_ENV')) {
+            throw new \Exception("Redirecionando para: $location");
+        }
+
         header('Location: ' . $location, true, 302);
         exit;
     }
