@@ -6,9 +6,12 @@ use App\Models\User;
 
 class Auth
 {
-    public static function login($user): void
+    public static function login(User $user): void
     {
-        $_SESSION['user']['id'] = $user->id;
+        $_SESSION['user'] = [
+            'id' => $user->id,
+            'role' => $user->role,
+        ];
     }
 
     public static function user(): ?User
@@ -28,6 +31,25 @@ class Auth
 
     public static function logout(): void
     {
-        unset($_SESSION['user']['id']);
+        unset($_SESSION['user']);
+    }
+
+    public static function isAdmin(): bool
+    {
+        $user = self::user();
+        return $user && $user->role === 'admin';
+    }
+
+    public static function attempt(string $email, string $password): bool
+    {
+        $user = User::findByEmail($email);
+
+        if ($user && password_verify($password, $user->password)) {
+            self::login($user);
+            return true;
+        }
+
+        self::logout();
+        return false;
     }
 }

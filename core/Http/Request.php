@@ -21,6 +21,11 @@ class Request
         $this->headers = function_exists('getallheaders') ? getallheaders() : [];
     }
 
+    public function getAllParams(): array
+    {
+        return $this->params;
+    }
+
     public function getMethod(): string
     {
         return $this->method;

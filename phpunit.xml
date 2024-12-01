@@ -4,11 +4,11 @@
   colors="true" cacheDirectory=".cache/phpunit"
   displayDetailsOnTestsThatTriggerWarnings="true">
   <php>
-    <env name="APP_ENV" value="testing" />
-    <env name="DB_HOST" value="db" />
-    <env name="DB_PORT" value="3306" />
-    <env name="DB_DATABASE" value="problem_test" />
-    <env name="DB_USERNAME" value="root" />
-    <env name="DB_PASSWORD" value="" />
+    <env name="APP_ENV" value="development"/>
+    <env name="DB_DATABASE" value="PHP_PetStore"/>
+    <env name="DB_USERNAME" value="petstore_user"/>
+    <env name="DB_PASSWORD" value="securepassword"/>
+    <env name="DB_HOST" value="db"/>
+    <env name="DB_PORT" value="3306"/>
   </php>
 </phpunit>

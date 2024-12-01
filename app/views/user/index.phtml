@@ -1,0 +1,14 @@
+<h1>Lista de Usuários</h1>
+<a href="/user/create">Novo Usuário</a>
+<ul>
+    <?php foreach ($users as $user): ?>
+        <li>
+            <?= htmlspecialchars($user->name) ?> (<?= htmlspecialchars($user->email) ?>)
+            <a href="/user/<?= $user->id ?>">Ver</a>
+            <a href="/user/<?= $user->id ?>/edit">Editar</a>
+            <form action="/user/<?= $user->id ?>/delete" method="POST" style="display:inline;">
+                <button type="submit">Excluir</button>
+            </form>
+        </li>
+    <?php endforeach; ?>
+</ul>

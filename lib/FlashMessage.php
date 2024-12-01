@@ -22,6 +22,11 @@ class FlashMessage
         return $flash;
     }
 
+    public static function add(string $type, string $value): void
+    {
+        self::message($type, $value);
+    }
+
     private static function message(string $type, string $value): void
     {
         $_SESSION['flash'][$type] = $value;

@@ -1,1 +1,10 @@
-<h1><?= $title ?></h1>
+<h1>Bem-vindo ao PHP PetStore</h1>
+
+<?php if (isset($user)): ?>
+    <p>Olá, <?= htmlspecialchars($user->name) ?>!</p>
+    <a href="/dashboard">Ir para Dashboard</a> | 
+    <a href="/logout">Sair</a>
+<?php else: ?>
+    <p>Faça login para acessar todas as funcionalidades.</p>
+    <a href="/login">Entrar</a>
+<?php endif; ?>

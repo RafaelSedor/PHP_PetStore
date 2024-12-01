@@ -3,14 +3,15 @@
 namespace Tests;
 
 use Core\Database\Database;
+use Core\Env\EnvLoader;
 use PHPUnit\Framework\TestCase as FrameworkTestCase;
 
 class TestCase extends FrameworkTestCase
 {
     public function setUp(): void
     {
-        // Database::create();
-        // Database::migrate();
+        parent::setUp();
+        EnvLoader::init();
     }
 
     public function tearDown(): void
