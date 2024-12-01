@@ -16,40 +16,70 @@ O sistema inclui:
 **Repositório do Projeto:** [GitHub - PHP_PetStore](https://github.com/RafaelSedor/PHP_PetStore.git)
 
 ## 2. Como Executar o Projeto
-### Pré-requisitos
+### Dependências
+
 - Docker
 - Docker Compose
 
-### Passo a Passo para Executar:
-1. Clone o repositório do projeto:
-   ```bash
-   git clone https://github.com/RafaelSedor/PHP_PetStore.git
-   ```
-2. Navegue até o diretório do projeto:
-   ```bash
-   cd PHP_PetStore
-   ```
-3. Execute o Docker Compose para configurar e iniciar os serviços:
-   ```bash
-   docker-compose up --build
-   ```
-4. Acesse a aplicação no navegador em `http://localhost:8000`.
+### To run
 
-## 3. Como Contribuir
-Contribuições são sempre bem-vindas! Siga as etapas abaixo para contribuir com o projeto:
+#### Clone Repository
 
-1. Faça um fork do projeto.
-2. Crie uma nova branch para a sua feature ou correção de bug:
-   ```bash
-   git checkout -b feature/nome-da-feature
-   ```
-3. Commit suas mudanças:
-   ```bash
-   git commit -m 'Descrição da nova feature ou correção'
-   ```
-4. Envie suas alterações para o seu repositório forkado:
-   ```bash
-   git push origin feature/nome-da-feature
-   ```
-5. Abra um Pull Request no repositório original.
+```
+$ git clone https://github.com/RafaelSedor/PHP_PetStore.git
+$ cd PetStore
+```
 
+#### Define the env variables
+
+```
+$ cp .env.example .env
+```
+
+#### Install the dependencies
+
+```
+$ ./run composer install
+```
+
+#### Up the containers
+
+```
+$ docker compose up -d
+```
+
+ou
+
+```
+$ ./run up -d
+```
+
+#### Create database and tables
+
+```
+$ ./run db:reset
+```
+
+#### Populate database
+
+```
+$ ./run db:populate
+```
+
+### Fixed uploads folder permission
+
+```
+sudo chown www-data:www-data public/assets/uploads
+```
+
+#### Run the tests
+
+```
+$ docker compose run --rm php ./vendor/bin/phpunit tests --color
+```
+
+ou
+
+```
+$ ./run test
+```
