@@ -27,7 +27,7 @@ O sistema inclui:
 
 ```
 $ git clone https://github.com/RafaelSedor/PHP_PetStore.git
-$ cd PetStore
+$ cd PHP_PetStore
 ```
 
 #### Define the env variables

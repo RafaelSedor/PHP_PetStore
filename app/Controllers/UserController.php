@@ -30,7 +30,9 @@ class UserController extends Controller
 
     public function create()
     {
-        $this->render('user/create');
+        return $this->render('user/create', [
+            'role' => 'user'
+        ]);
     }
 
     public function store(Request $request)
