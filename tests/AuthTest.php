@@ -28,17 +28,17 @@ class AuthTest extends TestCase
         $this->assertEquals('admin', $user->role);
     }
 
-    // public function test_user_login_success()
-    // {
+    public function test_user_login_success()
+    {
 
-    //     $result = Auth::attempt('user@petstore.com', 'userpassword');
+        $result = Auth::attempt('user@petstore.com', 'userpassword');
 
-    //     $this->assertTrue($result);
+        $this->assertTrue($result);
 
-    //     $user = Auth::user();
-    //     $this->assertNotNull($user);
-    //     $this->assertEquals('user', $user->role);
-    // }
+        $user = Auth::user();
+        $this->assertNotNull($user);
+        $this->assertEquals('user', $user->role);
+    }
 
     public function test_invalid_login()
     {

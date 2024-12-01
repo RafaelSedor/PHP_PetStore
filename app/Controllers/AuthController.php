@@ -21,7 +21,7 @@ class AuthController extends Controller
                 $this->redirectTo('/admin/dashboard');
             } else {
                 FlashMessage::success('Login realizado com sucesso.');
-                $this->redirectTo('/dashboard');
+                $this->redirectTo('/');
             }
         } else {
             FlashMessage::danger('E-mail ou senha inválidos.');
