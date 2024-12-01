@@ -1,0 +1,15 @@
+<h1>Novo Usuário</h1>
+<form action="/user/store" method="POST">
+    <label for="name">Nome:</label>
+    <input type="text" name="name" id="name" required>
+    <label for="email">Email:</label>
+    <input type="email" name="email" id="email" required>
+    <label for="password">Senha:</label>
+    <input type="password" name="password" id="password" required>
+    <label for="role">Papel:</label>
+    <select name="role" id="role">
+        <option value="admin">Administrador</option>
+        <option value="user">Usuário</option>
+    </select>
+    <button type="submit">Salvar</button>
+</form>
