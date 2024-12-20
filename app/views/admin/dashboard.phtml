@@ -1,11 +1,26 @@
-<h1>Dashboard do Administrador</h1>
-<p>Bem-vindo, administrador!</p>
-
-<nav>
-    <ul>
-        <li><a href="/users">Lista de Usuários</a></li>
-        <li><a href="/user/create">Criar Novo Usuário</a></li>
-    </ul>
-</nav>
-
-<a href="/logout">Sair</a>
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Dashboard do Administrador</h1>
+    <div class="d-flex justify-content-end mb-3">
+        <a href="/logout" class="btn btn-danger"><i class="bi bi-box-arrow-right"></i> Sair</a>
+    </div>
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Lista de Usuários</h5>
+                    <p class="card-text">Visualize e gerencie todos os usuários do sistema.</p>
+                    <a href="/users" class="btn btn-primary">Ver Usuários</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Criar Novo Usuário</h5>
+                    <p class="card-text">Adicione um novo usuário ao sistema.</p>
+                    <a href="/user/create" class="btn btn-success">Adicionar Usuário</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -56,12 +56,20 @@ class Controller
 
     protected function redirectTo(string $location): void
     {
+        if (defined('IS_TEST_ENV')) {
+            throw new \Exception("Redirecting to: $location");
+        }
+    
         header('Location: ' . $location);
         exit;
     }
 
     protected function redirectBack(): void
     {
+        if (defined('IS_TEST_ENV')) {
+            throw new \Exception("Redirecting back");
+        }
+
         $referer = $_SERVER['HTTP_REFERER'] ?? '/';
         $this->redirectTo($referer);
     }
