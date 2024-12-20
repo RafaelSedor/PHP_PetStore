@@ -1,5 +1,21 @@
-<h1>Detalhes do Usuário</h1>
-<p>Nome: <?= htmlspecialchars($user->name) ?></p>
-<p>Email: <?= htmlspecialchars($user->email) ?></p>
-<p>Papel: <?= htmlspecialchars($user->role) ?></p>
-<a href="/users">Voltar</a>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12 col-md-8 offset-md-2">
+            <h1 class="text-center text-primary mb-4">Detalhes do Usuário</h1>
+            
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title text-secondary">Informações do Usuário</h5>
+                    <p class="card-text"><strong>Nome:</strong> <?= htmlspecialchars($user->name) ?></p>
+                    <p class="card-text"><strong>Email:</strong> <?= htmlspecialchars($user->email) ?></p>
+                    <p class="card-text"><strong>Papel:</strong> <?= htmlspecialchars($user->role) ?></p>
+                </div>
+                <div class="card-footer text-end">
+                    <a href="/users" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Voltar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

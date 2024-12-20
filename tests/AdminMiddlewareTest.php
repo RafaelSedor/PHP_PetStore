@@ -30,11 +30,6 @@ class AdminMiddlewareTest extends TestCase
         $_SESSION = [];
     }
 
-    public function test_example()
-    {
-        echo "Executando teste de exemplo\n";
-        $this->assertTrue(true);
-    }
 
     public function test_redirects_when_not_authenticated()
     {

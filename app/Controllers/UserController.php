@@ -39,6 +39,18 @@ class UserController extends Controller
     {
         $data = $request->getAllParams();
 
+        if (empty($data['name']) || empty($data['email']) || empty($data['password']) || empty($data['role'])) {
+            FlashMessage::danger('Todos os campos são obrigatórios.');
+            $this->redirectBack();
+            return;
+        }
+
+        if (!in_array($data['role'], ['admin', 'user'])) {
+            FlashMessage::danger('Role inválido.');
+            $this->redirectBack();
+            return;
+        }
+
         $user = new User();
         $user->name = $data['name'];
         $user->email = $data['email'];
@@ -70,9 +82,16 @@ class UserController extends Controller
     public function update(Request $request)
     {
         $data = $request->getAllParams();
-        $id = $data['id'];
+        $id = $data['id'] ?? null;
 
         $user = User::findById($id);
+
+        if (!$id) {
+            FlashMessage::danger('ID do usuário não foi fornecido.');
+            $this->redirectBack();
+        }
+
+        $user = User::findById((int)$id);
 
         if (!$user) {
             FlashMessage::danger('Usuário não encontrado.');

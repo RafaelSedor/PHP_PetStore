@@ -97,6 +97,13 @@ class User
         return $stmt->execute([':id' => $this->id]);
     }
 
+    public static function deleteByEmail(string $email): bool
+    {
+        $db = Database::getDatabaseConn();
+        $stmt = $db->prepare("DELETE FROM users WHERE email = :email");
+        return $stmt->execute([':email' => $email]);
+    }
+
     private static function mapDataToUser(array $data): self
     {
         $user = new self();

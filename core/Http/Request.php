@@ -16,7 +16,7 @@ class Request
     public function __construct()
     {
         $this->method = $_REQUEST['_method'] ?? $_SERVER['REQUEST_METHOD'];
-        $this->uri = $_SERVER['REQUEST_URI'];
+        $this->uri = $_SERVER['REQUEST_URI'] ?? '/';
         $this->params = $_REQUEST;
         $this->headers = function_exists('getallheaders') ? getallheaders() : [];
     }

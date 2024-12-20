@@ -1,16 +1,38 @@
-<h1>Editar Usuário</h1>
-<form action="/user/update" method="POST">
-    <input type="hidden" name="id" value="<?= htmlspecialchars($user->id) ?>">
-    <label for="name">Nome:</label>
-    <input type="text" name="name" id="name" value="<?= htmlspecialchars($user->name) ?>" required>
-    <label for="email">Email:</label>
-    <input type="email" name="email" id="email" value="<?= htmlspecialchars($user->email) ?>" required>
-    <label for="password">Senha (deixe em branco para não alterar):</label>
-    <input type="password" name="password" id="password">
-    <label for="role">Papel:</label>
-    <select name="role" id="role">
-        <option value="admin" <?= $user->role === 'admin' ? 'selected' : '' ?>>Administrador</option>
-        <option value="user" <?= $user->role === 'user' ? 'selected' : '' ?>>Usuário</option>
-    </select>
-    <button type="submit">Salvar</button>
-</form>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h1 class="text-center text-primary mb-4">Editar Usuário</h1>
+
+            <form action="/user/update" method="POST" class="p-4 border rounded shadow-sm bg-light">
+                <input type="hidden" name="id" value="<?= htmlspecialchars($user->id) ?>">
+
+                <div class="mb-3">
+                    <label for="name" class="form-label">Nome:</label>
+                    <input type="text" name="name" id="name" value="<?= htmlspecialchars($user->name) ?>" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email:</label>
+                    <input type="email" name="email" id="email" value="<?= htmlspecialchars($user->email) ?>" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">Senha (deixe em branco para não alterar):</label>
+                    <input type="password" name="password" id="password" class="form-control">
+                </div>
+
+                <div class="mb-3">
+                    <label for="role" class="form-label">Papel:</label>
+                    <select name="role" id="role" class="form-select">
+                        <option value="admin" <?= $user->role === 'admin' ? 'selected' : '' ?>>Administrador</option>
+                        <option value="user" <?= $user->role === 'user' ? 'selected' : '' ?>>Usuário</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-save"></i> Salvar
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
