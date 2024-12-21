@@ -20,14 +20,20 @@ class UserController extends Controller
     {
         $id = $request->getParam('id');
         $user = User::findById((int) $id);
-        $currentUser = Auth::user();
 
-        if (!$user || ($user->id !== $currentUser->id && !$currentUser->role === 'admin')) {
+        if (!$user) {
+            FlashMessage::danger('Usuário não encontrado.');
             $this->redirectTo('/login');
         }
 
-        $this->render('user/show', ['user' => $user, 'currentUser' => $currentUser]);
+        if ($user->id !== Auth::user()->id) {
+            FlashMessage::danger('Você não tem permissão para acessar este perfil.');
+            $this->redirectTo('/user/' . Auth::user()->id);
+        }
+
+        $this->render('user/show', ['user' => $user]);
     }
+
 
     public function create()
     {

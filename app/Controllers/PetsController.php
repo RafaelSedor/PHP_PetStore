@@ -18,10 +18,26 @@ class PetsController extends Controller
         $this->render('pets/index', ['pets' => $pets, 'user' => $user]);
     }
 
-    public function create()
+
+    public function create(Request $request)
     {
-        $this->render('pets/create');
+        $data = $request->getAllParams();
+
+        $pet = new Pet();
+        $pet->name = $data['name'];
+        $pet->species = $data['species'];
+        $pet->age = $data['age'];
+        $pet->user_id = Auth::user()->id;
+
+        if ($pet->save()) {
+            FlashMessage::success('Animal criado com sucesso.');
+            $this->redirectTo('/user/' . Auth::user()->id . '/pets');
+        } else {
+            FlashMessage::danger('Erro ao criar o animal.');
+            $this->redirectBack();
+        }
     }
+
 
     public function store(Request $request)
     {
@@ -66,45 +82,43 @@ class PetsController extends Controller
     public function update(Request $request)
     {
         $data = $request->getAllParams();
-        $id = $data['id'] ?? null;
-        $pet = Pet::findById($id);
-        $user = Auth::user();
+        $pet = Pet::findById($data['id']);
 
-        if (!$id || !$pet || $pet->user_id !== $user->id) {
-            FlashMessage::danger('Animal não encontrado ou sem permissão.');
-            $this->redirectTo('/user/' . $user->id . '/pets');
+        if (!$pet || $pet->user_id !== Auth::user()->id) {
+            FlashMessage::danger('Você não tem permissão para editar este animal.');
+            $this->redirectTo('/user/' . Auth::user()->id . '/pets');
         }
 
         $pet->name = $data['name'];
         $pet->species = $data['species'];
-        $pet->age = (int) $data['age'];
+        $pet->age = $data['age'];
 
         if ($pet->save()) {
             FlashMessage::success('Animal atualizado com sucesso.');
-            $this->redirectTo('/user/' . $user->id . '/pets');
+            $this->redirectTo('/user/' . Auth::user()->id . '/pets');
         } else {
             FlashMessage::danger('Erro ao atualizar o animal.');
             $this->redirectBack();
         }
     }
 
+
     public function delete(Request $request)
     {
-        $id = $request->getParam('id');
-        $pet = Pet::findById($id);
-        $user = Auth::user();
+        $data = $request->getAllParams();
+        $pet = Pet::findById($data['id']);
 
-        if (!$pet || $pet->user_id !== $user->id) {
-            FlashMessage::danger('Animal não encontrado ou sem permissão.');
-            $this->redirectTo('/user/' . $user->id . '/pets');
+        if (!$pet || $pet->user_id !== Auth::user()->id) {
+            FlashMessage::danger('Você não tem permissão para excluir este animal.');
+            $this->redirectTo('/user/' . Auth::user()->id . '/pets');
         }
 
         if ($pet->delete()) {
             FlashMessage::success('Animal excluído com sucesso.');
+            $this->redirectTo('/user/' . Auth::user()->id . '/pets');
         } else {
             FlashMessage::danger('Erro ao excluir o animal.');
+            $this->redirectBack();
         }
-
-        $this->redirectTo('/user/' . $user->id . '/pets');
     }
 }
