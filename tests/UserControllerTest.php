@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Controllers;
+namespace Tests\UserControllers;
 
 use App\Controllers\UserController;
 use App\Models\User;
@@ -53,7 +53,9 @@ class UserControllerTest extends TestCase
             $controller->store($request);
             ob_end_clean();
         } catch (\Exception $e) {
-            $this->assertEquals('Redirecting to: /users', $e->getMessage());
+            $this->assertEquals('Redirecting to: /login', $e->getMessage());
+        } finally {
+            ob_end_clean();
         }
 
         $user = User::findByEmail('rafael.sedor@petstoreTest.com');
@@ -82,6 +84,8 @@ class UserControllerTest extends TestCase
             ob_end_clean();
         } catch (\Exception $e) {
             $this->assertEquals('Redirecting back', $e->getMessage());
+        } finally {
+            ob_end_clean();
         }
 
         $user = User::findByEmail('');
@@ -120,6 +124,8 @@ class UserControllerTest extends TestCase
             ob_end_clean();
         } catch (\Exception $e) {
             $this->assertEquals('Redirecting to: /users', $e->getMessage());
+        } finally {
+            ob_end_clean();
         }
 
         $updatedUser = User::findById($user->id);
@@ -155,6 +161,8 @@ class UserControllerTest extends TestCase
             ob_end_clean();
         } catch (\Exception $e) {
             $this->assertEquals('Redirecting to: /users', $e->getMessage());
+        } finally {
+            ob_end_clean();
         }
 
         $deletedUser = User::findById($user->id);

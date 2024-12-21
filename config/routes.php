@@ -2,6 +2,7 @@
 
 use App\Middleware\AdminMiddleware;
 use App\Middleware\UserProfileMiddleware;
+use App\Middleware\Authenticate;
 use Core\Router\Route;
 
 Route::get('/', ['App\Controllers\HomeController', 'index']);
@@ -19,3 +20,11 @@ Route::get('/user/{id}', ['App\Controllers\UserController', 'show'])->addMiddlew
 Route::get('/user/{id}/edit', ['App\Controllers\UserController', 'edit'])->addMiddleware(new AdminMiddleware());
 Route::post('/user/update', ['App\Controllers\UserController', 'update'])->addMiddleware(new AdminMiddleware());
 Route::post('/user/{id}/delete', ['App\Controllers\UserController', 'delete'])->addMiddleware(new AdminMiddleware());
+
+Route::get('/user/{id}/pets', ['App\Controllers\PetsController', 'index'])->addMiddleware(new Authenticate());
+Route::get('/pets/create', ['App\Controllers\PetsController', 'create'])->addMiddleware(new Authenticate());
+Route::post('/pets/store', ['App\Controllers\PetsController', 'store'])->addMiddleware(new Authenticate());
+Route::get('/pets/{id}/edit', ['App\Controllers\PetsController', 'edit'])->addMiddleware(new Authenticate());
+Route::post('/pets/{id}/update', ['App\Controllers\PetsController', 'update'])->addMiddleware(new Authenticate());
+Route::post('/pets/{id}/delete', ['App\Controllers\PetsController', 'delete'])->addMiddleware(new Authenticate());
+
