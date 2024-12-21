@@ -9,8 +9,7 @@ $db = Database::getDatabaseConn();
 $passwordAdmin = password_hash('adminpassword', PASSWORD_DEFAULT);
 $passwordUser = password_hash('userpassword', PASSWORD_DEFAULT);
 
-$sqlAdmin = "INSERT INTO users (name, email, password, role) VALUES 
-            (:adminName, :adminEmail, :adminPassword, 'admin')";
+$sqlAdmin = "INSERT INTO users (name, email, password, role) VALUES (:adminName, :adminEmail, :adminPassword, 'admin')";
 $stmtAdmin = $db->prepare($sqlAdmin);
 $stmtAdmin->execute([
     ':adminName' => 'Admin User',
@@ -18,8 +17,7 @@ $stmtAdmin->execute([
     ':adminPassword' => $passwordAdmin,
 ]);
 
-$sqlUser = "INSERT INTO users (name, email, password, role) VALUES 
-            (:userName, :userEmail, :userPassword, 'user')";
+$sqlUser = "INSERT INTO users (name, email, password, role) VALUES (:userName, :userEmail, :userPassword, 'user')";
 $stmtUser = $db->prepare($sqlUser);
 $stmtUser->execute([
     ':userName' => 'Default User',

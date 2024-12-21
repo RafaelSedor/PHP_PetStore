@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use Core\Http\Controllers\Controller;
+use Lib\Authentication\Auth;
 use Lib\FlashMessage;
 use Core\Http\Request;
 use App\Models\User;
@@ -18,14 +19,14 @@ class UserController extends Controller
     public function show(Request $request)
     {
         $id = $request->getParam('id');
-        $user = User::findById($id);
+        $user = User::findById((int) $id);
+        $currentUser = Auth::user();
 
-        if (!$user) {
-            FlashMessage::danger('Usuário não encontrado.');
-            $this->redirectTo('/users');
+        if (!$user || ($user->id !== $currentUser->id && !$currentUser->role === 'admin')) {
+            $this->redirectTo('/login');
         }
 
-        $this->render('user/show', ['user' => $user]);
+        $this->render('user/show', ['user' => $user, 'currentUser' => $currentUser]);
     }
 
     public function create()
@@ -59,7 +60,7 @@ class UserController extends Controller
 
         if ($user->save()) {
             FlashMessage::success('Usuário criado com sucesso.');
-            $this->redirectTo('/users');
+            $this->redirectTo('/login');
         } else {
             FlashMessage::danger('Erro ao criar o usuário.');
             $this->redirectBack();

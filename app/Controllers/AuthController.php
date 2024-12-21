@@ -33,7 +33,7 @@ class AuthController extends Controller
     {
         Auth::logout();
         FlashMessage::success('Logout realizado com sucesso.');
-        $this->redirectTo('/login');
+        $this->redirectTo('/');
     }
 
     public function showLoginForm()

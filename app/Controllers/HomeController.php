@@ -9,16 +9,7 @@ class HomeController extends Controller
 {
     public function index()
     {
-        if (Auth::check()) {
-            $user = Auth::user();
-
-            if (Auth::isAdmin()) {
-                $this->redirectTo('/admin/dashboard');
-            }
-
-            $this->render('home/index', ['user' => $user]);
-        } else {
-            $this->render('home/index');
-        }
+        $user = Auth::check() ? Auth::user() : null;
+        $this->render('home/index', ['user' => $user]);
     }
 }

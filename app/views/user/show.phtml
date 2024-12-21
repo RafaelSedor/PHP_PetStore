@@ -1,21 +1,17 @@
 <div class="container mt-5">
-    <div class="row">
-        <div class="col-12 col-md-8 offset-md-2">
-            <h1 class="text-center text-primary mb-4">Detalhes do Usuário</h1>
-            
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title text-secondary">Informações do Usuário</h5>
-                    <p class="card-text"><strong>Nome:</strong> <?= htmlspecialchars($user->name) ?></p>
-                    <p class="card-text"><strong>Email:</strong> <?= htmlspecialchars($user->email) ?></p>
-                    <p class="card-text"><strong>Papel:</strong> <?= htmlspecialchars($user->role) ?></p>
-                </div>
-                <div class="card-footer text-end">
-                    <a href="/users" class="btn btn-secondary">
-                        <i class="bi bi-arrow-left"></i> Voltar
-                    </a>
-                </div>
-            </div>
+    <h1 class="text-center text-primary">Perfil de <?= htmlspecialchars($user->name) ?></h1>
+    <div class="card shadow-sm mt-4">
+        <div class="card-body">
+            <p><strong>Nome:</strong> <?= htmlspecialchars($user->name) ?></p>
+            <p><strong>Email:</strong> <?= htmlspecialchars($user->email) ?></p>
+            <p><strong>Papel:</strong> <?= htmlspecialchars($user->role) ?></p>
         </div>
+    </div>
+    <div class="text-end mt-3">
+        <?php if (isset($currentUser) && $currentUser->role === 'admin'): ?>
+            <a href="/users" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Voltar</a>
+        <?php else: ?>
+            <a href="/" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Voltar</a>
+        <?php endif; ?>
     </div>
 </div>

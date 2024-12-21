@@ -1,6 +1,7 @@
 <?php
 
 use App\Middleware\AdminMiddleware;
+use App\Middleware\UserProfileMiddleware;
 use Core\Router\Route;
 
 Route::get('/', ['App\Controllers\HomeController', 'index']);
@@ -14,7 +15,7 @@ Route::post('/user/store', ['App\Controllers\UserController', 'store']);
 Route::get('/admin/dashboard', ['App\Controllers\AdminController', 'index'])->addMiddleware(new AdminMiddleware());
 
 Route::get('/users', ['App\Controllers\UserController', 'index'])->addMiddleware(new AdminMiddleware());
-Route::get('/user/{id}', ['App\Controllers\UserController', 'show'])->addMiddleware(new AdminMiddleware());
+Route::get('/user/{id}', ['App\Controllers\UserController', 'show'])->addMiddleware(new UserProfileMiddleware());
 Route::get('/user/{id}/edit', ['App\Controllers\UserController', 'edit'])->addMiddleware(new AdminMiddleware());
 Route::post('/user/update', ['App\Controllers\UserController', 'update'])->addMiddleware(new AdminMiddleware());
 Route::post('/user/{id}/delete', ['App\Controllers\UserController', 'delete'])->addMiddleware(new AdminMiddleware());
