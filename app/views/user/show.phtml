@@ -4,14 +4,89 @@
         <div class="card-body">
             <p><strong>Nome:</strong> <?= htmlspecialchars($user->name) ?></p>
             <p><strong>Email:</strong> <?= htmlspecialchars($user->email) ?></p>
-            <p><strong>Papel:</strong> <?= htmlspecialchars($user->role) ?></p>
         </div>
     </div>
-    <div class="text-end mt-3">
-        <?php if (isset($currentUser) && $currentUser->role === 'admin'): ?>
-            <a href="/users" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Voltar</a>
+
+    <div class="mt-5">
+        <h2 class="text-success">Pedidos em Aberto</h2>
+        <?php if (!empty($openOrders)): ?>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Itens</th>
+                            <th>Data</th>
+                            <th>Total</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($openOrders as $order): ?>
+                            <tr>
+                                <td><?= $order->id ?></td>
+                                <td>
+                                    <?php foreach ($order->items as $item): ?>
+                                        <p>
+                                            Produto: <?= htmlspecialchars($item['product_name']) ?><br>
+                                            Quantidade: <?= htmlspecialchars($item['quantity']) ?><br>
+                                            Preço Unitário: R$ <?= number_format($item['product_price'], 2, ',', '.') ?>
+                                        </p>
+                                    <?php endforeach; ?>
+                                </td>
+                                <td><?= date('d/m/Y H:i', strtotime($order->created_at)) ?></td>
+                                <td>R$ <?= number_format(array_reduce($order->items, fn($carry, $item) => $carry + ($item['product_price'] * $item['quantity']), 0), 2, ',', '.') ?></td>
+                                <td>
+                                    <form action="/user/shopping-lists/<?= $order->id ?>/delete" method="POST" class="d-inline">
+                                        <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
         <?php else: ?>
-            <a href="/" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Voltar</a>
+            <p class="text-muted">Nenhum pedido em aberto.</p>
         <?php endif; ?>
     </div>
+
+    <div class="mt-5">
+        <h2 class="text-primary">Pedidos Finalizados</h2>
+        <?php if (!empty($completedOrders)): ?>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Itens</th>
+                            <th>Data</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($completedOrders as $order): ?>
+                            <tr>
+                                <td><?= $order->id ?></td>
+                                <td>
+                                    <?php foreach ($order->items as $item): ?>
+                                        <p>
+                                            Produto: <?= htmlspecialchars($item['product_name']) ?><br>
+                                            Quantidade: <?= htmlspecialchars($item['quantity']) ?><br>
+                                            Preço Unitário: R$ <?= number_format($item['product_price'], 2, ',', '.') ?>
+                                        </p>
+                                    <?php endforeach; ?>
+                                </td>
+                                <td><?= date('d/m/Y H:i', strtotime($order->created_at)) ?></td>
+                                <td>R$ <?= number_format(array_reduce($order->items, fn($carry, $item) => $carry + ($item['product_price'] * $item['quantity']), 0), 2, ',', '.') ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php else: ?>
+            <p class="text-muted">Nenhum pedido finalizado.</p>
+        <?php endif; ?>
+    </div>
+    <a href="/" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Voltar</a>
 </div>

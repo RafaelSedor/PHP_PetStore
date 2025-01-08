@@ -6,7 +6,7 @@
   <php>
     <const name="IS_TEST_ENV" value="true" />
     <env name="APP_ENV" value="development" />
-    <env name="DB_DATABASE" value="PHP_PetStore" />
+    <env name="DB_DATABASE" value="PHP_PetStore_Test" />
     <env name="DB_USERNAME" value="petstore_user" />
     <env name="DB_PASSWORD" value="securepassword" />
     <env name="DB_HOST" value="db" />

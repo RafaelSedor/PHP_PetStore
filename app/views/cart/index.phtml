@@ -1,0 +1,37 @@
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Meu Carrinho</h1>
+    <?php if (!empty($products)): ?>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Produto</th>
+                        <th>Preço</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($products as $product): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($product->name) ?></td>
+                            <td>R$ <?= number_format($product->price, 2, ',', '.') ?></td>
+                            <td>
+                                <form action="/user/<?= htmlspecialchars($user->id) ?>/cart/remove" method="POST" style="display:inline;">
+                                    <input type="hidden" name="product_id" value="<?= htmlspecialchars($product->id) ?>">
+                                    <button type="submit" class="btn btn-danger btn-sm">Remover</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+        <form action="/user/<?= htmlspecialchars($user->id) ?>/cart/checkout" method="POST" class="d-flex justify-content-between mb-3">
+            <a href="/" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Voltar</a>
+            <button type="submit" class="btn btn-success">Finalizar Compra</button>
+        </form>
+    <?php else: ?>
+        <p class="text-center text-muted">Seu carrinho está vazio.</p>
+        <a href="/" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Voltar</a>
+    <?php endif; ?>
+</div>

@@ -1,0 +1,69 @@
+<div class="container mt-5">
+    <h1 class="text-center text-primary">Gerenciamento de Listas de Compras</h1>
+
+    <form method="GET" action="/admin/shopping-lists" class="mb-4 d-flex justify-content-between align-items-center">
+        <div class="d-flex">
+            <select name="status" class="form-select me-2">
+                <option value="open" <?= isset($_GET['status']) && $_GET['status'] === 'open' ? 'selected' : '' ?>>Pedidos em Aberto</option>
+                <option value="closed" <?= isset($_GET['status']) && $_GET['status'] === 'closed' ? 'selected' : '' ?>>Pedidos Finalizados</option>
+            </select>
+            <input type="text" name="user_name" class="form-control me-2" placeholder="Buscar pelo nome do usuário" value="<?= htmlspecialchars($_GET['user_name'] ?? '') ?>">
+            <button type="submit" class="btn btn-primary">Filtrar</button>
+        </div>
+        <a href="/admin/dashboard" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Voltar</a>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Usuário</th>
+                    <th>Itens</th>
+                    <th>Data</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (!empty($shoppingLists)): ?>
+                    <?php foreach ($shoppingLists as $list): ?>
+                        <tr>
+                            <td><?= $list->id ?></td>
+                            <td><?= htmlspecialchars($list->user->name) ?></td>
+                            <td>
+                                <?php foreach ($list->items as $item): ?>
+                                    <p>
+                                        Produto: <?= htmlspecialchars($item['product_name']) ?><br>
+                                        Quantidade: <?= htmlspecialchars($item['quantity']) ?><br>
+                                        Preço Unitário: R$ <?= number_format($item['product_price'], 2, ',', '.') ?>
+                                    </p>
+                                <?php endforeach; ?>
+                            </td>
+                            <td><?= date('d/m/Y H:i', strtotime($list->created_at)) ?></td>
+                            <td>R$ <?= number_format(array_reduce($list->items, fn($carry, $item) => $carry + ($item['product_price'] * $item['quantity']), 0), 2, ',', '.') ?></td>
+                            <td>
+                                <?= htmlspecialchars($list->status === 'open' ? 'Aberto' : ($list->status === 'closed' ? 'Finalizado' : '')) ?>
+                            </td>
+                            <td>
+                                <?php if ($list->status === 'open'): ?>
+                                    <form action="/admin/shopping-lists/<?= $list->id ?>/finalize" method="POST" class="d-inline">
+                                        <button type="submit" class="btn btn-success btn-sm">Finalizar</button>
+                                    </form>
+                                    <form action="/admin/shopping-lists/<?= $list->id ?>/delete" method="POST" class="d-inline">
+                                        <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
+                                    </form>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="7" class="text-center">Nenhuma lista encontrada.</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+</div>

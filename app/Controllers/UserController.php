@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Models\ShoppingList;
 use Core\Http\Controllers\Controller;
 use Lib\Authentication\Auth;
 use Lib\FlashMessage;
@@ -26,14 +27,28 @@ class UserController extends Controller
             $this->redirectTo('/login');
         }
 
-        if ($user->id !== Auth::user()->id) {
+        $currentUser = Auth::user();
+        if ($user->id !== $currentUser->id && $currentUser->role !== 'admin') {
             FlashMessage::danger('Você não tem permissão para acessar este perfil.');
-            $this->redirectTo('/user/' . Auth::user()->id);
+            $this->redirectTo('/user/' . $currentUser->id);
         }
 
-        $this->render('user/show', ['user' => $user]);
-    }
+        $openOrders = ShoppingList::findByStatus($user->id, 'open');
+        foreach ($openOrders as $order) {
+            $order->items = ShoppingList::findItemsByListId($order->id);
+        }
 
+        $completedOrders = ShoppingList::findByStatus($user->id, 'closed');
+        foreach ($completedOrders as $order) {
+            $order->items = ShoppingList::findItemsByListId($order->id);
+        }
+
+        $this->render('user/show', [
+            'user' => $user,
+            'openOrders' => $openOrders,
+            'completedOrders' => $completedOrders,
+        ]);
+    }
 
     public function create()
     {

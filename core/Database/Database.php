@@ -7,13 +7,13 @@ use PDO;
 
 class Database
 {
-    public static function getDatabaseConn(): PDO
+    public static function getDatabaseConn(string $database = null): PDO
     {
         $user = $_ENV['DB_USERNAME'];
         $pwd  = $_ENV['DB_PASSWORD'];
         $host = $_ENV['DB_HOST'];
         $port = $_ENV['DB_PORT'];
-        $db   = $_ENV['DB_DATABASE'];
+        $db   = $database ?? $_ENV['DB_DATABASE'];
 
         $pdo = new PDO('mysql:host=' . $host . ';port=' . $port . ';dbname=' . $db, $user, $pwd);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -36,8 +36,11 @@ class Database
 
     public static function create(): void
     {
-        $sql = 'CREATE DATABASE IF NOT EXISTS ' . $_ENV['DB_DATABASE'] . ';';
-        self::getConn()->exec($sql);
+        $sqlMain = 'CREATE DATABASE IF NOT EXISTS ' . $_ENV['DB_DATABASE'] . ';';
+        self::getConn()->exec($sqlMain);
+
+        $sqlTest = 'CREATE DATABASE IF NOT EXISTS ' . $_ENV['DB_TEST_DATABASE'] . ';';
+        self::getConn()->exec($sqlTest);
     }
 
     public static function drop(): void
@@ -48,7 +51,10 @@ class Database
 
     public static function migrate(): void
     {
-        $sql = file_get_contents(Constants::databasePath()->join('schema.sql'));
-        self::getDatabaseConn()->exec($sql);
+        $sqlMain = file_get_contents(Constants::databasePath()->join('schema.sql'));
+        self::getDatabaseConn($_ENV['DB_DATABASE'])->exec($sqlMain);
+
+        $sqlTest = file_get_contents(Constants::databasePath()->join('schema.sql'));
+        self::getDatabaseConn($_ENV['DB_TEST_DATABASE'])->exec($sqlTest);
     }
 }

@@ -26,6 +26,7 @@ $stmtUser->execute([
 ]);
 
 $userId = $db->lastInsertId();
+
 $pets = [
     ['name' => 'Pinsher', 'species' => 'Cachorro', 'age' => 4, 'user_id' => $userId],
     ['name' => 'Agata', 'species' => 'Gato', 'age' => 7, 'user_id' => $userId],
@@ -42,6 +43,42 @@ foreach ($pets as $pet) {
         ':species' => $pet['species'],
         ':age' => $pet['age'],
         ':user_id' => $pet['user_id'],
+    ]);
+}
+
+$categories = [
+    ['name' => 'Brinquedos'],
+    ['name' => 'Alimentos'],
+    ['name' => 'Acessórios'],
+    ['name' => 'Higiene'],
+];
+
+$sqlCategory = "INSERT INTO categories (name) VALUES (:name)";
+$stmtCategory = $db->prepare($sqlCategory);
+
+foreach ($categories as $category) {
+    $stmtCategory->execute([
+        ':name' => $category['name'],
+    ]);
+}
+
+$products = [
+    ['name' => 'Bola para Cachorro', 'description' => 'Uma bola resistente para cachorros de todos os tamanhos.', 'price' => 29.90, 'category_id' => 1, 'image_url' => 'https://down-br.img.susercontent.com/file/32e7b64738c4936f67cade4301210821'],
+    ['name' => 'Ração para Gatos', 'description' => 'Ração premium para gatos adultos.', 'price' => 89.90, 'category_id' => 2, 'image_url' => 'https://down-br.img.susercontent.com/file/32e7b64738c4936f67cade4301210821'],
+    ['name' => 'Coleira Ajustável', 'description' => 'Coleira confortável e ajustável para cachorros.', 'price' => 49.90, 'category_id' => 3, 'image_url' => 'https://down-br.img.susercontent.com/file/32e7b64738c4936f67cade4301210821'],
+    ['name' => 'Shampoo para Pets', 'description' => 'Shampoo especial para cuidar do pelo dos pets.', 'price' => 34.90, 'category_id' => 4, 'image_url' => 'https://down-br.img.susercontent.com/file/32e7b64738c4936f67cade4301210821'],
+];
+
+$sqlProduct = "INSERT INTO products (name, description, price, category_id, image_url) VALUES (:name, :description, :price, :category_id, :image_url)";
+$stmtProduct = $db->prepare($sqlProduct);
+
+foreach ($products as $product) {
+    $stmtProduct->execute([
+        ':name' => $product['name'],
+        ':description' => $product['description'],
+        ':price' => $product['price'],
+        ':category_id' => $product['category_id'],
+        ':image_url' => $product['image_url'],
     ]);
 }
 
