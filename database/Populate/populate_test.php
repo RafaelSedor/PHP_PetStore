@@ -4,28 +4,40 @@ require_once __DIR__ . '/../../config/bootstrap.php';
 
 use Core\Database\Database;
 
-$db = Database::getDatabaseConn();
+$db = Database::getDatabaseConn($_ENV['DB_TEST_DATABASE']);
 
 $passwordAdmin = password_hash('adminpassword', PASSWORD_DEFAULT);
 $passwordUser = password_hash('userpassword', PASSWORD_DEFAULT);
 
-$sqlAdmin = "INSERT INTO users (name, email, password, role) VALUES (:adminName, :adminEmail, :adminPassword, 'admin')";
-$stmtAdmin = $db->prepare($sqlAdmin);
-$stmtAdmin->execute([
-    ':adminName' => 'Admin User',
-    ':adminEmail' => 'admin@petstore.com',
-    ':adminPassword' => $passwordAdmin,
-]);
+$sqlCheckAdmin = "SELECT id FROM users WHERE email = :adminEmail";
+$stmtCheckAdmin = $db->prepare($sqlCheckAdmin);
+$stmtCheckAdmin->execute([':adminEmail' => 'admin@petstore.com']);
 
-$sqlUser = "INSERT INTO users (name, email, password, role) VALUES (:userName, :userEmail, :userPassword, 'user')";
-$stmtUser = $db->prepare($sqlUser);
-$stmtUser->execute([
-    ':userName' => 'Default User',
-    ':userEmail' => 'user@petstore.com',
-    ':userPassword' => $passwordUser,
-]);
+if (!$stmtCheckAdmin->fetch()) {
+    $sqlAdmin = "INSERT INTO users (name, email, password, role) VALUES (:adminName, :adminEmail, :adminPassword, 'admin')";
+    $stmtAdmin = $db->prepare($sqlAdmin);
+    $stmtAdmin->execute([
+        ':adminName' => 'Admin User',
+        ':adminEmail' => 'admin@petstore.com',
+        ':adminPassword' => $passwordAdmin,
+    ]);
+}
 
-$userId = $db->lastInsertId();
+$sqlCheckUser = "SELECT id FROM users WHERE email = :userEmail";
+$stmtCheckUser = $db->prepare($sqlCheckUser);
+$stmtCheckUser->execute([':userEmail' => 'user@petstore.com']);
+
+if (!$stmtCheckUser->fetch()) {
+    $sqlUser = "INSERT INTO users (name, email, password, role) VALUES (:userName, :userEmail, :userPassword, 'user')";
+    $stmtUser = $db->prepare($sqlUser);
+    $stmtUser->execute([
+        ':userName' => 'Default User',
+        ':userEmail' => 'user@petstore.com',
+        ':userPassword' => $passwordUser,
+    ]);
+}
+
+$userId = $db->query("SELECT id FROM users WHERE email = 'user@petstore.com'")->fetchColumn();
 
 $pets = [
     ['name' => 'Pinsher', 'species' => 'Cachorro', 'age' => 4, 'user_id' => $userId],
@@ -34,16 +46,21 @@ $pets = [
     ['name' => 'Maiara', 'species' => 'Gato', 'age' => 1, 'user_id' => $userId],
 ];
 
+$sqlCheckPet = "SELECT id FROM pets WHERE name = :name AND user_id = :user_id";
 $sqlPet = "INSERT INTO pets (name, species, age, user_id) VALUES (:name, :species, :age, :user_id)";
+$stmtCheckPet = $db->prepare($sqlCheckPet);
 $stmtPet = $db->prepare($sqlPet);
 
 foreach ($pets as $pet) {
-    $stmtPet->execute([
-        ':name' => $pet['name'],
-        ':species' => $pet['species'],
-        ':age' => $pet['age'],
-        ':user_id' => $pet['user_id'],
-    ]);
+    $stmtCheckPet->execute([':name' => $pet['name'], ':user_id' => $pet['user_id']]);
+    if (!$stmtCheckPet->fetch()) {
+        $stmtPet->execute([
+            ':name' => $pet['name'],
+            ':species' => $pet['species'],
+            ':age' => $pet['age'],
+            ':user_id' => $pet['user_id'],
+        ]);
+    }
 }
 
 $categories = [
@@ -53,13 +70,16 @@ $categories = [
     ['name' => 'Higiene'],
 ];
 
+$sqlCheckCategory = "SELECT id FROM categories WHERE name = :name";
 $sqlCategory = "INSERT INTO categories (name) VALUES (:name)";
+$stmtCheckCategory = $db->prepare($sqlCheckCategory);
 $stmtCategory = $db->prepare($sqlCategory);
 
 foreach ($categories as $category) {
-    $stmtCategory->execute([
-        ':name' => $category['name'],
-    ]);
+    $stmtCheckCategory->execute([':name' => $category['name']]);
+    if (!$stmtCheckCategory->fetch()) {
+        $stmtCategory->execute([':name' => $category['name']]);
+    }
 }
 
 $products = [

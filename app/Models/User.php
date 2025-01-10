@@ -117,4 +117,21 @@ class User
 
         return $user;
     }
+
+    public static function create(array $data): int
+    {
+        $db = Database::getDatabaseConn();
+        $stmt = $db->prepare("
+        INSERT INTO users (name, email, password, role, created_at, updated_at) 
+        VALUES (:name, :email, :password, :role, NOW(), NOW())");
+
+        $stmt->execute([
+            ':name' => $data['name'],
+            ':email' => $data['email'],
+            ':password' => $data['password'],
+            ':role' => $data['role'] ?? 'user',
+        ]);
+
+        return (int) $db->lastInsertId();
+    }
 }

@@ -1,0 +1,19 @@
+<div class="container mt-5">
+    <h1 class="text-primary text-center">Editar Pet</h1>
+    <form action="/pets/<?= $pet->id ?>/update" method="POST">
+        <input type="hidden" name="id" value="<?= htmlspecialchars($pet->id) ?>">
+        <div class="mb-3">
+            <label for="name" class="form-label">Nome</label>
+            <input type="text" name="name" id="name" class="form-control" value="<?= htmlspecialchars($pet->name) ?>" required>
+        </div>
+        <div class="mb-3">
+            <label for="species" class="form-label">Espécie</label>
+            <input type="text" name="species" id="species" class="form-control" value="<?= htmlspecialchars($pet->species) ?>" required>
+        </div>
+        <div class="mb-3">
+            <label for="age" class="form-label">Idade</label>
+            <input type="number" name="age" id="age" class="form-control" value="<?= htmlspecialchars($pet->age) ?>" required>
+        </div>
+        <button type="submit" class="btn btn-success"><i class="bi bi-save"></i> Salvar</button>
+    </form>
+</div>

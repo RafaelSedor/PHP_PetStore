@@ -1,0 +1,66 @@
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Adicionar Produto</h1>
+    <form action="/admin/products" method="POST" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="name" class="form-label">Nome</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Descrição</label>
+            <textarea class="form-control" id="description" name="description" required></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="price" class="form-label">Preço</label>
+            <input type="number" step="0.01" class="form-control" id="price" name="price" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Categorias</label>
+            <div id="categories-list" class="d-flex flex-wrap">
+                <?php foreach ($categories as $category): ?>
+                    <div class="form-check me-3">
+                        <input class="form-check-input category-checkbox" type="checkbox" id="category-<?= $category->id ?>" name="categories[]" value="<?= $category->id ?>">
+                        <label class="form-check-label" for="category-<?= $category->id ?>">
+                            <?= htmlspecialchars($category->name) ?>
+                        </label>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="selected-categories" class="form-label">Categorias Selecionadas</label>
+            <ul id="selected-categories" class="list-group"></ul>
+        </div>
+        <div class="mb-3">
+            <label for="image_file" class="form-label">Imagem do Produto</label>
+            <input type="file" class="form-control" id="image_file" name="image_file">
+        </div>
+        <div class="mb-3">
+            <label for="image_url" class="form-label">URL da Imagem</label>
+            <input type="text" class="form-control" id="image_url" name="image_url">
+        </div>
+        <button type="submit" class="btn btn-primary">Salvar</button>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkboxes = document.querySelectorAll('.category-checkbox');
+        const selectedCategoriesList = document.getElementById('selected-categories');
+
+        function updateSelectedCategories() {
+            selectedCategoriesList.innerHTML = '';
+            checkboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    const listItem = document.createElement('li');
+                    listItem.className = 'list-group-item';
+                    listItem.textContent = checkbox.nextElementSibling.textContent;
+                    selectedCategoriesList.appendChild(listItem);
+                }
+            });
+        }
+
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateSelectedCategories);
+        });
+    });
+</script>
