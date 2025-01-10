@@ -51,6 +51,7 @@ CREATE TABLE IF NOT EXISTS shopping_lists (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status ENUM('open', 'closed') DEFAULT 'open',
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
