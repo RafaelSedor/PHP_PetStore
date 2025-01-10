@@ -1,6 +1,6 @@
 <div class="container mt-5">
     <h1 class="text-center mb-4">Adicionar Produto</h1>
-    <form action="/admin/products" method="POST">
+    <form action="/admin/products" method="POST" enctype="multipart/form-data">
         <div class="mb-3">
             <label for="name" class="form-label">Nome</label>
             <input type="text" class="form-control" id="name" name="name" required>
@@ -17,11 +17,13 @@
             <label for="category_id" class="form-label">Categoria</label>
             <select id="category_id" name="category_id" class="form-select" required>
                 <?php foreach ($categories as $category): ?>
-                    <option value="<?= $category->id ?>" <?= isset($product) && $product->category_id == $category->id ? 'selected' : '' ?>>
-                        <?= htmlspecialchars($category->name) ?>
-                    </option>
+                    <option value="<?= $category->id ?>"><?= htmlspecialchars($category->name) ?></option>
                 <?php endforeach; ?>
             </select>
+        </div>
+        <div class="mb-3">
+            <label for="image_file" class="form-label">Imagem do Produto</label>
+            <input type="file" class="form-control" id="image_file" name="image_file">
         </div>
         <div class="mb-3">
             <label for="image_url" class="form-label">URL da Imagem</label>

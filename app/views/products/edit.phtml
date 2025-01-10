@@ -1,6 +1,6 @@
 <div class="container mt-5">
     <h1 class="text-center mb-4">Editar Produto</h1>
-    <form action="/admin/products/<?= $product->id ?>/update" method="POST">
+    <form action="/admin/products/<?= $product->id ?>/update" method="POST" enctype="multipart/form-data">
         <div class="mb-3">
             <label for="name" class="form-label">Nome</label>
             <input type="text" class="form-control" id="name" name="name" value="<?= htmlspecialchars($product->name) ?>" required>
@@ -22,6 +22,10 @@
                     </option>
                 <?php endforeach; ?>
             </select>
+        </div>
+        <div class="mb-3">
+            <label for="image_file" class="form-label">Imagem do Produto</label>
+            <input type="file" class="form-control" id="image_file" name="image_file">
         </div>
         <div class="mb-3">
             <label for="image_url" class="form-label">URL da Imagem</label>

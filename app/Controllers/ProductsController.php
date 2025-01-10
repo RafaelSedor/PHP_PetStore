@@ -26,6 +26,25 @@ class ProductsController extends Controller
     public function store(Request $request)
     {
         $data = $request->getAllParams();
+        $file = $_FILES['image_file'] ?? null;
+
+        if ($file && $file['error'] === UPLOAD_ERR_OK) {
+            $uploadDir = __DIR__ . '/../../public/assets/uploads/';
+            $fileName = uniqid() . '-' . basename($file['name']);
+            $uploadPath = $uploadDir . $fileName;
+
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+
+            if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
+                $data['image_url'] = '/assets/uploads/' . $fileName;
+            } else {
+                FlashMessage::danger('Erro ao fazer upload do arquivo.');
+                $this->redirectBack();
+            }
+        }
+
         $product = new Product();
         $product->name = $data['name'];
         $product->description = $data['description'];
@@ -60,12 +79,30 @@ class ProductsController extends Controller
     public function update(Request $request)
     {
         $data = $request->getAllParams();
+        $file = $_FILES['image_file'] ?? null;
         $id = $data['id'];
         $product = Product::findById($id);
 
         if (!$product) {
             FlashMessage::danger('Produto não encontrado.');
             $this->redirectTo('/admin/products');
+        }
+
+        if ($file && $file['error'] === UPLOAD_ERR_OK) {
+            $uploadDir = __DIR__ . '/../../public/assets/uploads/';
+            $fileName = uniqid() . '-' . basename($file['name']);
+            $uploadPath = $uploadDir . $fileName;
+
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+
+            if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
+                $data['image_url'] = '/assets/uploads/' . $fileName;
+            } else {
+                FlashMessage::danger('Erro ao fazer upload do arquivo.');
+                $this->redirectBack();
+            }
         }
 
         $product->name = $data['name'];

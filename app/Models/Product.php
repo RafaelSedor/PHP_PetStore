@@ -85,6 +85,7 @@ class Product
         }
     }
 
+
     public function delete(): bool
     {
         if (!isset($this->id)) {
