@@ -41,17 +41,11 @@ class Controller
     /**
      * @param array<string, mixed> $data
      */
-    protected function renderJson(string $view, array $data = []): void
+    protected function renderJson(array $data, int $statusCode = 200): void
     {
-        extract($data);
-
-        $view = Constants::rootPath()->join('app/views/' . $view . '.json.php');
-        $json = [];
-
-        header('Content-Type: application/json; chartset=utf-8');
-        require $view;
-        echo json_encode($json);
-        return;
+        header('Content-Type: application/json', true, $statusCode);
+        echo json_encode($data);
+        exit;
     }
 
     protected function redirectTo(string $location): void
@@ -59,7 +53,7 @@ class Controller
         if (defined('IS_TEST_ENV')) {
             throw new \Exception("Redirecting to: $location");
         }
-    
+
         header('Location: ' . $location);
         exit;
     }
