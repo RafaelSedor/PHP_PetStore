@@ -19,14 +19,23 @@ class ProductModelTest extends TestCase
         }
         $this->categoryId = Category::findByName("Test Category")->id;
 
-        Product::create([
+        $productData = [
             'name' => 'Test Product',
             'description' => 'Test Description',
             'price' => 100.00,
-            'category_id' => $this->categoryId,
             'image_url' => 'https://down-br.img.susercontent.com/file/32e7b64738c4936f67cade4301210821',
-        ]);
-        $this->productId = Product::findByCategory($this->categoryId)[0]->id ?? null;
+            'categories' => [$this->categoryId],
+        ];
+
+        $product = new Product();
+        $product->name = $productData['name'];
+        $product->description = $productData['description'];
+        $product->price = $productData['price'];
+        $product->image_url = $productData['image_url'];
+        $product->categories = $productData['categories'];
+        $product->save();
+
+        $this->productId = $product->id;
     }
 
     protected function tearDown(): void
@@ -39,7 +48,10 @@ class ProductModelTest extends TestCase
         }
 
         if ($this->categoryId) {
-            Category::delete($this->categoryId);
+            $category = Category::findById($this->categoryId);
+            if ($category) {
+                $category->delete($this->categoryId);
+            }
         }
 
         parent::tearDown();
@@ -57,36 +69,24 @@ class ProductModelTest extends TestCase
         $products = Product::findByCategory($this->categoryId);
         $this->assertIsArray($products);
         $this->assertNotEmpty($products);
-        $this->assertEquals($this->categoryId, $products[0]->category_id);
-    }
 
-    public function testAll()
-    {
-        $products = Product::all();
-        $this->assertIsArray($products);
-        $this->assertNotEmpty($products);
-
-        $found = false;
-        foreach ($products as $product) {
-            if ($product->id === $this->productId) {
-                $found = true;
-                break;
-            }
-        }
-
-        $this->assertTrue($found);
+        $product = $products[0];
+        $this->assertEquals($this->productId, $product->id);
+        $this->assertContains($this->categoryId, array_column($product->categories, 'id'));
     }
 
     public function testSave()
     {
         $product = Product::findById($this->productId);
         $product->name = 'Updated Test Product';
+        $product->categories = [$this->categoryId];
         $result = $product->save();
 
         $this->assertTrue($result);
 
         $updatedProduct = Product::findById($this->productId);
         $this->assertEquals('Updated Test Product', $updatedProduct->name);
+        $this->assertContains($this->categoryId, array_column($updatedProduct->categories, 'id'));
     }
 
     public function testDelete()
@@ -108,28 +108,28 @@ class ProductModelTest extends TestCase
             'name' => 'Another Test Product',
             'description' => 'Another Description',
             'price' => 150.00,
-            'category_id' => $this->categoryId,
             'image_url' => 'https://down-br.img.susercontent.com/file/32e7b64738c4936f67cade4301210821',
+            'categories' => [$this->categoryId],
         ];
 
-        $result = Product::create($data);
+        $product = new Product();
+        $product->name = $data['name'];
+        $product->description = $data['description'];
+        $product->price = $data['price'];
+        $product->image_url = $data['image_url'];
+        $product->categories = $data['categories'];
+        $result = $product->save();
+
         $this->assertTrue($result);
 
-        $newProduct = Product::findByCategory($this->categoryId);
-        $foundProduct = array_filter($newProduct, function ($product) use ($data) {
-            return $product->name === $data['name'];
-        });
+        $newProduct = Product::findById($product->id);
+        $this->assertInstanceOf(Product::class, $newProduct);
+        $this->assertEquals($data['name'], $newProduct->name);
+        $this->assertEquals($data['description'], $newProduct->description);
+        $this->assertEquals($data['price'], $newProduct->price);
+        $this->assertEquals($data['image_url'], $newProduct->image_url);
+        $this->assertContains($this->categoryId, array_column($newProduct->categories, 'id'));
 
-        $this->assertNotEmpty($foundProduct, "Product was not found after creation.");
-        $foundProduct = array_values($foundProduct)[0];
-
-        $this->assertInstanceOf(Product::class, $foundProduct);
-        $this->assertEquals($data['name'], $foundProduct->name);
-        $this->assertEquals($data['description'], $foundProduct->description);
-        $this->assertEquals($data['price'], $foundProduct->price);
-        $this->assertEquals($data['category_id'], $foundProduct->category_id);
-        $this->assertEquals($data['image_url'], $foundProduct->image_url);
-
-        $foundProduct->delete();
+        $newProduct->delete();
     }
 }

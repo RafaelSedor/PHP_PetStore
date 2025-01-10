@@ -45,11 +45,16 @@ class ProductsController extends Controller
             }
         }
 
+        if (!isset($data['categories']) || !is_array($data['categories']) || empty($data['categories'])) {
+            FlashMessage::danger('É necessário selecionar pelo menos uma categoria válida.');
+            $this->redirectBack();
+        }
+
         $product = new Product();
         $product->name = $data['name'];
         $product->description = $data['description'];
         $product->price = $data['price'];
-        $product->category_id = $data['category_id'];
+        $product->categories  = $data['categories'];
         $product->image_url = $data['image_url'];
 
         if ($product->save()) {
@@ -108,7 +113,7 @@ class ProductsController extends Controller
         $product->name = $data['name'];
         $product->description = $data['description'];
         $product->price = $data['price'];
-        $product->category_id = $data['category_id'];
+        $product->categories  = $data['categories'];
         $product->image_url = $data['image_url'];
 
         if ($product->save()) {

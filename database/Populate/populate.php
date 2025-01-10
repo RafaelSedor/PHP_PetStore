@@ -63,23 +63,34 @@ foreach ($categories as $category) {
 }
 
 $products = [
-    ['name' => 'Bola para Cachorro', 'description' => 'Uma bola resistente para cachorros de todos os tamanhos.', 'price' => 29.90, 'category_id' => 1, 'image_url' => 'https://down-br.img.susercontent.com/file/32e7b64738c4936f67cade4301210821'],
-    ['name' => 'Ração para Gatos', 'description' => 'Ração premium para gatos adultos.', 'price' => 89.90, 'category_id' => 2, 'image_url' => 'https://down-br.img.susercontent.com/file/32e7b64738c4936f67cade4301210821'],
-    ['name' => 'Coleira Ajustável', 'description' => 'Coleira confortável e ajustável para cachorros.', 'price' => 49.90, 'category_id' => 3, 'image_url' => 'https://down-br.img.susercontent.com/file/32e7b64738c4936f67cade4301210821'],
-    ['name' => 'Shampoo para Pets', 'description' => 'Shampoo especial para cuidar do pelo dos pets.', 'price' => 34.90, 'category_id' => 4, 'image_url' => 'https://down-br.img.susercontent.com/file/32e7b64738c4936f67cade4301210821'],
+    ['name' => 'Bola para Cachorro', 'description' => 'Uma bola resistente para cachorros de todos os tamanhos.', 'price' => 29.90, 'categories' => [1, 3], 'image_url' => 'https://down-br.img.susercontent.com/file/32e7b64738c4936f67cade4301210821'],
+    ['name' => 'Ração para Gatos', 'description' => 'Ração premium para gatos adultos.', 'price' => 89.90, 'categories' => [2], 'image_url' => 'https://down-br.img.susercontent.com/file/32e7b64738c4936f67cade4301210821'],
+    ['name' => 'Coleira Ajustável', 'description' => 'Coleira confortável e ajustável para cachorros.', 'price' => 49.90, 'categories' => [1, 3], 'image_url' => 'https://down-br.img.susercontent.com/file/32e7b64738c4936f67cade4301210821'],
+    ['name' => 'Shampoo para Pets', 'description' => 'Shampoo especial para cuidar do pelo dos pets.', 'price' => 34.90, 'categories' => [4], 'image_url' => 'https://down-br.img.susercontent.com/file/32e7b64738c4936f67cade4301210821'],
 ];
 
-$sqlProduct = "INSERT INTO products (name, description, price, category_id, image_url) VALUES (:name, :description, :price, :category_id, :image_url)";
+$sqlProduct = "INSERT INTO products (name, description, price, image_url) VALUES (:name, :description, :price, :image_url)";
+$sqlProductCategory = "INSERT INTO product_categories (product_id, category_id) VALUES (:product_id, :category_id)";
 $stmtProduct = $db->prepare($sqlProduct);
+$stmtProductCategory = $db->prepare($sqlProductCategory);
 
 foreach ($products as $product) {
     $stmtProduct->execute([
         ':name' => $product['name'],
         ':description' => $product['description'],
         ':price' => $product['price'],
-        ':category_id' => $product['category_id'],
         ':image_url' => $product['image_url'],
     ]);
+
+    $productId = $db->lastInsertId();
+
+    foreach ($product['categories'] as $categoryId) {
+        $stmtProductCategory->execute([
+            ':product_id' => $productId,
+            ':category_id' => $categoryId,
+        ]);
+    }
 }
+
 
 echo "Banco de dados populado com sucesso.";

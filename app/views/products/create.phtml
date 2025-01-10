@@ -14,12 +14,21 @@
             <input type="number" step="0.01" class="form-control" id="price" name="price" required>
         </div>
         <div class="mb-3">
-            <label for="category_id" class="form-label">Categoria</label>
-            <select id="category_id" name="category_id" class="form-select" required>
+            <label class="form-label">Categorias</label>
+            <div id="categories-list" class="d-flex flex-wrap">
                 <?php foreach ($categories as $category): ?>
-                    <option value="<?= $category->id ?>"><?= htmlspecialchars($category->name) ?></option>
+                    <div class="form-check me-3">
+                        <input class="form-check-input category-checkbox" type="checkbox" id="category-<?= $category->id ?>" name="categories[]" value="<?= $category->id ?>">
+                        <label class="form-check-label" for="category-<?= $category->id ?>">
+                            <?= htmlspecialchars($category->name) ?>
+                        </label>
+                    </div>
                 <?php endforeach; ?>
-            </select>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="selected-categories" class="form-label">Categorias Selecionadas</label>
+            <ul id="selected-categories" class="list-group"></ul>
         </div>
         <div class="mb-3">
             <label for="image_file" class="form-label">Imagem do Produto</label>
@@ -32,3 +41,26 @@
         <button type="submit" class="btn btn-primary">Salvar</button>
     </form>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkboxes = document.querySelectorAll('.category-checkbox');
+        const selectedCategoriesList = document.getElementById('selected-categories');
+
+        function updateSelectedCategories() {
+            selectedCategoriesList.innerHTML = '';
+            checkboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    const listItem = document.createElement('li');
+                    listItem.className = 'list-group-item';
+                    listItem.textContent = checkbox.nextElementSibling.textContent;
+                    selectedCategoriesList.appendChild(listItem);
+                }
+            });
+        }
+
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateSelectedCategories);
+        });
+    });
+</script>

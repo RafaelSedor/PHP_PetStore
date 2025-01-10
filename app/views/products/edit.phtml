@@ -14,10 +14,10 @@
             <input type="number" step="0.01" class="form-control" id="price" name="price" value="<?= htmlspecialchars($product->price) ?>" required>
         </div>
         <div class="mb-3">
-            <label for="category_id" class="form-label">Categoria</label>
-            <select id="category_id" name="category_id" class="form-select" required>
+            <label for="categories" class="form-label">Categorias</label>
+            <select id="categories" name="categories[]" class="form-select" multiple required>
                 <?php foreach ($categories as $category): ?>
-                    <option value="<?= $category->id ?>" <?= $product->category_id == $category->id ? 'selected' : '' ?>>
+                    <option value="<?= $category->id ?>" <?= in_array($category->id, array_column($product->categories, 'id')) ? 'selected' : '' ?>>
                         <?= htmlspecialchars($category->name) ?>
                     </option>
                 <?php endforeach; ?>

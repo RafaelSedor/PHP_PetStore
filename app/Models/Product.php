@@ -11,10 +11,9 @@ class Product
     public $name;
     public $description;
     public $price;
-    public $category_id;
     public $image_url;
     public $created_at;
-    public $category;
+    public $categories;
 
     public static function findById(int $id): ?self
     {
@@ -24,18 +23,38 @@ class Product
         $data = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($data) {
             $product = self::mapDataToProduct($data);
-            $product->category = Category::findById($product->category_id);
+            $product->categories = self::findCategories($id);
             return $product;
         }
         return null;
     }
 
-    public static function findByCategory(int $categoryId): array
+    public static function findCategories(int $productId): array
     {
         $db = Database::getDatabaseConn();
-        $stmt = $db->prepare("SELECT * FROM products WHERE category_id = :category_id");
-        $stmt->execute([':category_id' => $categoryId]);
-        return $stmt->fetchAll(PDO::FETCH_CLASS, self::class);
+        $stmt = $db->prepare("
+            SELECT c.* FROM categories c
+            INNER JOIN product_categories pc ON c.id = pc.category_id
+            WHERE pc.product_id = :product_id
+        ");
+        $stmt->execute([':product_id' => $productId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    private function syncCategories(): void
+    {
+        if (!is_array($this->categories)) {
+            return;
+        }
+
+        $db = Database::getDatabaseConn();
+        $stmt = $db->prepare("DELETE FROM product_categories WHERE product_id = :product_id");
+        $stmt->execute([':product_id' => $this->id]);
+
+        foreach ($this->categories as $categoryId) {
+            $stmt = $db->prepare("INSERT INTO product_categories (product_id, category_id) VALUES (:product_id, :category_id)");
+            $stmt->execute([':product_id' => $this->id, ':category_id' => $categoryId]);
+        }
     }
 
     public static function all(): array
@@ -45,7 +64,7 @@ class Product
         $products = $stmt->fetchAll(PDO::FETCH_CLASS, self::class);
 
         foreach ($products as $product) {
-            $product->category = Category::findById($product->category_id);
+            $product->categories = self::findCategories($product->id);
         }
 
         return $products;
@@ -56,35 +75,39 @@ class Product
         $db = Database::getDatabaseConn();
 
         if (isset($this->id)) {
-            $sql = "UPDATE products SET name = :name, description = :description, price = :price, category_id = :category_id, image_url = :image_url WHERE id = :id";
+            $sql = "UPDATE products SET name = :name, description = :description, price = :price, image_url = :image_url WHERE id = :id";
             $stmt = $db->prepare($sql);
-            return $stmt->execute([
+            $result = $stmt->execute([
                 ':id' => $this->id,
                 ':name' => $this->name,
                 ':description' => $this->description,
                 ':price' => $this->price,
-                ':category_id' => $this->category_id,
                 ':image_url' => $this->image_url,
             ]);
+
+            if ($result) {
+                $this->syncCategories();
+            }
+
+            return $result;
         } else {
-            $sql = "INSERT INTO products (name, description, price, category_id, image_url) VALUES (:name, :description, :price, :category_id, :image_url)";
+            $sql = "INSERT INTO products (name, description, price, image_url) VALUES (:name, :description, :price, :image_url)";
             $stmt = $db->prepare($sql);
             $result = $stmt->execute([
                 ':name' => $this->name,
                 ':description' => $this->description,
                 ':price' => $this->price,
-                ':category_id' => $this->category_id,
                 ':image_url' => $this->image_url,
             ]);
 
             if ($result) {
                 $this->id = $db->lastInsertId();
+                $this->syncCategories();
             }
 
             return $result;
         }
     }
-
 
     public function delete(): bool
     {
@@ -104,9 +127,10 @@ class Product
         $product->name = $data['name'];
         $product->description = $data['description'];
         $product->price = $data['price'];
-        $product->category_id = $data['category_id'];
         $product->image_url = $data['image_url'];
         $product->created_at = $data['created_at'];
+        $product->categories = self::findCategories($product->id);
+
         return $product;
     }
 
@@ -114,18 +138,42 @@ class Product
     {
         $db = Database::getDatabaseConn();
 
-        $sql = "
-        INSERT INTO products (name, description, price, category_id, image_url, created_at) 
-        VALUES (:name, :description, :price, :category_id, :image_url, NOW())";
+        $sql = "INSERT INTO products (name, description, price, image_url, created_at) 
+                VALUES (:name, :description, :price, :image_url, NOW())";
 
         $stmt = $db->prepare($sql);
-
-        return $stmt->execute([
+        $result = $stmt->execute([
             ':name' => $data['name'],
             ':description' => $data['description'],
             ':price' => $data['price'],
-            ':category_id' => $data['category_id'],
             ':image_url' => $data['image_url'],
         ]);
+
+        if ($result) {
+            $productId = $db->lastInsertId();
+            $product = new self();
+            $product->id = $productId;
+            $product->categories = $data['categories'] ?? [];
+            $product->syncCategories();
+        }
+
+        return $result;
+    }
+
+    public static function findByCategory(int $categoryId): array
+    {
+        $db = Database::getDatabaseConn();
+        $stmt = $db->prepare("
+        SELECT p.* FROM products p
+        INNER JOIN product_categories pc ON p.id = pc.product_id
+        WHERE pc.category_id = :category_id");
+        $stmt->execute([':category_id' => $categoryId]);
+        $products = $stmt->fetchAll(PDO::FETCH_CLASS, self::class);
+
+        foreach ($products as $product) {
+            $product->categories = self::findCategories($product->id);
+        }
+
+        return $products;
     }
 }
