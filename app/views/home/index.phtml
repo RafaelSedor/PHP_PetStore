@@ -22,6 +22,10 @@
                         <li class="nav-item">
                             <a class="nav-link" href="/user/<?= htmlspecialchars($user->id) ?>/cart"><i class="bi bi-basket"></i> Meu Carrinho</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/user/services/track"><i class="bi bi-list-task"></i> Meus Serviços</a>
+                        </li>
+
                     <?php endif; ?>
                     <li class="nav-item">
                         <a class="nav-link text-danger" href="/logout"><i class="bi bi-box-arrow-right"></i> Sair</a>
@@ -42,7 +46,7 @@
 <div class="container mt-5">
     <div class="container mt-4">
         <div class="d-flex align-items-center justify-content-between mb-4">
-            <input type="text" id="search-name" class="form-control me-2" placeholder="Buscar pelo nome do produto">
+            <input type="text" id="search-name" class="form-control me-2" placeholder="Buscar pelo nome do produto ou serviço">
 
             <select id="search-category" class="form-select me-2" style="max-width: 250px;">
                 <option value="">Todas as Categorias</option>
@@ -51,14 +55,51 @@
                         <option value="<?= $category->id ?>"><?= htmlspecialchars($category->name) ?></option>
                     <?php endforeach; ?>
                 <?php endif; ?>
-
             </select>
             <button id="search-button" class="btn btn-primary" aria-label="Buscar produtos">Buscar</button>
 
         </div>
     </div>
 
+    <div class="container mt-5">
+        <h2 class="mb-4 text-success">Serviços</h2>
+        <div class="row" id="service-results">
+            <?php if (empty($services)): ?>
+                <p class="text-center text-muted">Nenhum serviço encontrado.</p>
+            <?php endif; ?>
+            <?php foreach ($services as $service): ?>
+                <div class="col-md-4 mb-4">
+                    <div class="card shadow-sm h-100">
+                        <img src="<?= htmlspecialchars($service->image_url) ?>" class="card-img-top" alt="<?= htmlspecialchars($service->name) ?>" style="height: 200px; object-fit: cover;">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title"><?= htmlspecialchars($service->name) ?></h5>
+                            <p class="card-text"><?= htmlspecialchars($service->description) ?></p>
+                            <p class="card-text fw-bold mt-auto">R$ <?= number_format($service->price, 2, ',', '.') ?></p>
+                            <?php if (isset($user) && $user->role === 'user'): ?>
+                                <form action="/appointments/request" method="POST">
+                                    <input type="hidden" name="user_id" value="<?= $user->id ?>">
+                                    <input type="hidden" name="service_id" value="<?= htmlspecialchars($service->id) ?>">
+                                    <label for="pet-select-<?= $service->id ?>">Selecione seu pet:</label>
+                                    <select id="pet-select-<?= $service->id ?>" name="pet_id" class="form-select mb-2" required>
+                                        <option value="">Selecione um pet</option>
+                                        <?php foreach ($user->pets as $pet): ?>
+                                            <option value="<?= $pet->id ?>"><?= htmlspecialchars($pet->name) ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                    <button type="submit" class="btn btn-primary mt-2">Solicitar Serviço</button>
+                                </form>
+                            <?php else: ?>
+                                <p class="text-muted mt-2">Faça login para solicitar um serviço.</p>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+
     <div class="container">
+        <h2 class="mb-4 text-primary">Produtos</h2>
         <div class="row" id="product-results">
             <?php if (empty($products)): ?>
                 <p class="text-center text-muted">Nenhum produto encontrado.</p>
@@ -77,7 +118,7 @@
                                     <button type="submit" class="btn btn-primary w-100 mt-2"><i class="bi bi-basket"></i> Adicionar ao Carrinho</button>
                                 </form>
                             <?php else: ?>
-                                <p class="text-muted mt-2">Faça login para poder adicionar ao carrinho.</p>
+                                <p class="text-muted mt-2">Faça login para adicionar ao carrinho.</p>
                             <?php endif; ?>
                         </div>
                     </div>

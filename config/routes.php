@@ -1,6 +1,7 @@
 <?php
 
 use App\Controllers\AdminController;
+use App\Controllers\AppointmentController;
 use App\Controllers\AuthController;
 use App\Controllers\CartController;
 use App\Controllers\CategoriesController;
@@ -11,6 +12,7 @@ use App\Middleware\AdminMiddleware;
 use App\Middleware\Authenticate;
 use App\Middleware\UserProfileMiddleware;
 use App\Controllers\ProductsController;
+use App\Controllers\ServiceController;
 use App\Controllers\ShoppingListController;
 use App\Controllers\UserController;
 
@@ -65,3 +67,17 @@ Route::post('/admin/categories/store', [CategoriesController::class, 'store'])->
 Route::get('/admin/categories/{id}/edit', [CategoriesController::class, 'edit'])->addMiddleware(new AdminMiddleware());
 Route::post('/admin/categories/{id}/update', [CategoriesController::class, 'update'])->addMiddleware(new AdminMiddleware());
 Route::post('/admin/categories/{id}/delete', [CategoriesController::class, 'delete'])->addMiddleware(new AdminMiddleware());
+
+Route::get('/admin/services', [ServiceController::class, 'index'])->addMiddleware(new AdminMiddleware());
+Route::get('/admin/services/create', [ServiceController::class, 'create'])->addMiddleware(new AdminMiddleware());
+Route::post('/admin/services', [ServiceController::class, 'store'])->addMiddleware(new AdminMiddleware());
+Route::get('/admin/services/{id}/edit', [ServiceController::class, 'edit'])->addMiddleware(new AdminMiddleware());
+Route::post('/admin/services/{id}/update', [ServiceController::class, 'update'])->addMiddleware(new AdminMiddleware());
+Route::post('/admin/services/{id}/delete', [ServiceController::class, 'delete'])->addMiddleware(new AdminMiddleware());
+
+Route::get('/services', [ServiceController::class, 'index']);
+Route::get('/user/services/track', [ServiceController::class, 'track'])->addMiddleware(new Authenticate());
+Route::post('/appointments/request', [AppointmentController::class, 'request'])->addMiddleware(new Authenticate());
+
+Route::get('/admin/appointments', [AppointmentController::class, 'index'])->addMiddleware(new AdminMiddleware());
+Route::post('/admin/appointments/update', [AppointmentController::class, 'updateStatus'])->addMiddleware(new AdminMiddleware());

@@ -1,0 +1,49 @@
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Acompanhar Serviços Solicitados</h1>
+    <div class="table-responsive">
+        <?php if (empty($services)): ?>
+            <p class="text-center text-muted">Você ainda não solicitou nenhum serviço.</p>
+        <?php else: ?>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Serviço</th>
+                        <th>Pet</th>
+                        <th>Descrição</th>
+                        <th>Preço</th>
+                        <th>Status</th>
+                        <th>Atualizado em</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($services as $service): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($service->name) ?></td>
+                            <td><?= htmlspecialchars($service->pet_name ?? 'N/A') ?></td>
+                            <td><?= htmlspecialchars($service->description) ?></td>
+                            <td>R$ <?= number_format($service->price, 2, ',', '.') ?></td>
+                            <td>
+                                <?php if ($service->status === 'solicitado'): ?>
+                                    <span class="badge bg-warning">Solicitado</span>
+                                <?php elseif ($service->status === 'em andamento'): ?>
+                                    <span class="badge bg-info">Em andamento</span>
+                                <?php elseif ($service->status === 'finalizado'): ?>
+                                    <span class="badge bg-success">Finalizado</span>
+                                <?php else: ?>
+                                    <span class="badge bg-secondary">Desconhecido</span>
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <?= $service->updated_at ? date('d/m/Y H:i', strtotime($service->updated_at)) : 'N/A' ?>
+                            </td>
+
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php endif; ?>
+    </div>
+    <div class="text-center mt-4">
+        <a href="/" class="btn btn-primary"><i class="bi bi-arrow-left"></i> Voltar para Home</a>
+    </div>
+</div>

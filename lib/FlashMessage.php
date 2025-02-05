@@ -31,4 +31,12 @@ class FlashMessage
     {
         $_SESSION['flash'][$type] = $value;
     }
+
+    public static function info(string $message): void
+    {
+        $_SESSION['flash_message'] = [
+            'type' => 'info',
+            'message' => $message,
+        ];
+    }
 }

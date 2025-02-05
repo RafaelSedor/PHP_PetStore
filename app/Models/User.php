@@ -14,6 +14,7 @@ class User
     public $role;
     public $created_at;
     public $updated_at;
+    public $pets;
 
     public static function findById(int $id): ?self
     {
@@ -133,5 +134,13 @@ class User
         ]);
 
         return (int) $db->lastInsertId();
+    }
+
+    public function getPets(): array
+    {
+        $db = Database::getDatabaseConn();
+        $stmt = $db->prepare("SELECT * FROM pets WHERE user_id = :user_id");
+        $stmt->execute([':user_id' => $this->id]);
+        return $stmt->fetchAll(PDO::FETCH_CLASS);
     }
 }

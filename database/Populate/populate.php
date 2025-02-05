@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../../config/bootstrap.php';
 
+use App\Models\Service;
 use Core\Database\Database;
 
 $db = Database::getDatabaseConn();
@@ -91,6 +92,26 @@ foreach ($products as $product) {
         ]);
     }
 }
+
+$services = [
+    [
+        'name' => 'Banho',
+        'description' => 'Banho completo para o seu pet, com produtos especializados e equipe qualificada.',
+        'price' => 50.00,
+        'image_url' => 'https://nfpet.com.br/blog/wp-content/uploads/2020/01/23-01-750x410.png'
+    ]
+];
+
+foreach ($services as $serviceData) {
+    $service = new Service();
+    $service->name = $serviceData['name'];
+    $service->description = $serviceData['description'];
+    $service->price = $serviceData['price'];
+    $service->image_url = $serviceData['image_url'];
+
+    $service->save();
+}
+
 
 
 echo "Banco de dados populado com sucesso.";

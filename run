@@ -79,6 +79,7 @@ function db:reset {
 
 function db:populate {
     docker compose exec php php database/Populate/populate.php
+    docker compose exec php php database/Populate/populate_test.php
 }
 
 TIMEFORMAT=$'\nTask completed in %3lR'

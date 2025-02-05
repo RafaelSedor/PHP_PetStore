@@ -1,0 +1,54 @@
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Gerenciar Serviços Solicitados</h1>
+
+    <?php if (empty($appointments)): ?>
+        <p class="text-center text-muted">Nenhum serviço foi solicitado até o momento.</p>
+    <?php else: ?>
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Usuário</th>
+                    <th>Serviço</th>
+                    <th>Pet</th>
+                    <th>Status</th>
+                    <th>Atualizar Status</th>
+                    <th>Data de Solicitação</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($appointments as $appointment): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($appointment->user_name) ?></td>
+                        <td><?= htmlspecialchars($appointment->service_name) ?></td>
+                        <td><?= htmlspecialchars($appointment->pet_name) ?></td>
+                        <td>
+                            <?php if ($appointment->status === 'solicitado'): ?>
+                                <span class="badge bg-warning">Solicitado</span>
+                            <?php elseif ($appointment->status === 'em andamento'): ?>
+                                <span class="badge bg-info">Em andamento</span>
+                            <?php elseif ($appointment->status === 'finalizado'): ?>
+                                <span class="badge bg-success">Finalizado</span>
+                            <?php endif; ?>
+                        </td>
+                        <td>
+                            <form action="/admin/appointments/update" method="POST">
+                                <input type="hidden" name="id" value="<?= $appointment->id ?>">
+                                <select name="status" class="form-select" required>
+                                    <option value="solicitado" <?= $appointment->status === 'solicitado' ? 'selected' : '' ?>>Solicitado</option>
+                                    <option value="em andamento" <?= $appointment->status === 'em andamento' ? 'selected' : '' ?>>Em andamento</option>
+                                    <option value="finalizado" <?= $appointment->status === 'finalizado' ? 'selected' : '' ?>>Finalizado</option>
+                                </select>
+                                <button type="submit" class="btn btn-primary btn-sm mt-2">Atualizar</button>
+                            </form>
+                        </td>
+                        <td><?= date('d/m/Y H:i', strtotime($appointment->created_at)) ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    <?php endif; ?>
+
+    <div class="text-center mt-4">
+        <a href="/admin/dashboard" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Voltar ao Dashboard</a>
+    </div>
+</div>
